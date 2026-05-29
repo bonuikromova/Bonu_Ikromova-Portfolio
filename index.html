@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bonu Ikromova — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #f5f2ee;
+    --red: #e0281e;
+    --gray: #b0a89a;
+    --muted: #2a2520;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Cormorant Garamond', serif;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* LANG SWITCH */
+  #lang-bar {
+    position: fixed;
+    top: 24px; right: 32px;
+    z-index: 1000;
+    display: flex; gap: 8px;
+  }
+  .lang-btn {
+    background: none;
+    border: 1px solid var(--gray);
+    color: var(--gray);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: all .3s;
+    text-transform: uppercase;
+  }
+  .lang-btn.active, .lang-btn:hover {
+    border-color: var(--red);
+    color: var(--red);
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: .4;
+  }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-left {
+    display: flex; flex-direction: column;
+    justify-content: flex-end;
+    padding: 80px 60px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--red);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp .8s .2s forwards;
+  }
+
+  .hero-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(72px, 9vw, 140px);
+    line-height: .92;
+    letter-spacing: -2px;
+    color: var(--black);
+    opacity: 0;
+    animation: fadeUp .8s .4s forwards;
+  }
+
+  .hero-name span {
+    color: var(--red);
+    display: block;
+  }
+
+  .hero-title {
+    margin-top: 32px;
+    font-size: 20px;
+    font-style: italic;
+    font-weight: 300;
+    color: var(--gray);
+    opacity: 0;
+    animation: fadeUp .8s .6s forwards;
+  }
+
+  .hero-meta {
+    margin-top: 48px;
+    display: flex; gap: 40px;
+    opacity: 0;
+    animation: fadeUp .8s .8s forwards;
+  }
+
+  .meta-item {
+    display: flex; flex-direction: column;
+  }
+
+  .meta-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    line-height: 1;
+    color: var(--red);
+  }
+
+  .meta-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--gray);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .hero-right {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-right::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to right, var(--black) 0%, transparent 40%);
+    z-index: 1;
+  }
+
+  .hero-bg-text {
+    position: absolute;
+    right: -20px; top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+    transform-origin: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 200px;
+    color: rgba(255,255,255,.03);
+    white-space: nowrap;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .hero-graphic {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 0;
+  }
+
+  .circle-ring {
+    width: 480px; height: 480px;
+    border: 1px solid rgba(224,40,30,.15);
+    border-radius: 50%;
+    position: absolute;
+    animation: rotate 30s linear infinite;
+  }
+
+  .circle-ring:nth-child(2) {
+    width: 340px; height: 340px;
+    border-color: rgba(224,40,30,.08);
+    animation-duration: 20s;
+    animation-direction: reverse;
+  }
+
+  .circle-ring:nth-child(3) {
+    width: 220px; height: 220px;
+    border-color: rgba(224,40,30,.12);
+    animation-duration: 12s;
+  }
+
+  .tools-orbit {
+    position: absolute;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--red);
+    text-transform: uppercase;
+  }
+
+  @keyframes rotate { to { transform: rotate(360deg); } }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* SCROLL INDICATOR */
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px; left: 60px;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--gray);
+    text-transform: uppercase;
+    display: flex; align-items: center; gap: 12px;
+    opacity: 0;
+    animation: fadeUp .8s 1.2s forwards;
+  }
+
+  .scroll-hint::before {
+    content: '';
+    display: block;
+    width: 40px; height: 1px;
+    background: var(--red);
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    left: 32px; top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+    display: flex; flex-direction: column; gap: 20px;
+  }
+
+  .nav-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--muted);
+    cursor: pointer;
+    transition: all .3s;
+    position: relative;
+  }
+
+  .nav-dot::after {
+    content: attr(data-label);
+    position: absolute;
+    left: 16px; top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--gray);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity .3s;
+    text-transform: uppercase;
+  }
+
+  .nav-dot:hover::after, .nav-dot.active::after { opacity: 1; }
+  .nav-dot.active, .nav-dot:hover { background: var(--red); transform: scale(1.5); }
+
+  /* SECTIONS */
+  section {
+    padding: 120px 80px;
+    position: relative;
+  }
+
+  .section-header {
+    display: flex; align-items: baseline; gap: 24px;
+    margin-bottom: 80px;
+  }
+
+  .section-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 80px;
+    color: rgba(224,40,30,.15);
+    line-height: 1;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    letter-spacing: 2px;
+    line-height: 1;
+  }
+
+  /* ABOUT */
+  #about {
+    background: var(--black);
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .about-text p {
+    font-size: 21px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--gray);
+    margin-bottom: 24px;
+  }
+
+  .about-text p strong {
+    color: var(--white);
+    font-style: italic;
+  }
+
+  .about-contact {
+    margin-top: 40px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255,255,255,.08);
+  }
+
+  .contact-row {
+    display: flex; gap: 12px; align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .contact-row .ci {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--red);
+    text-transform: uppercase;
+    min-width: 80px;
+  }
+
+  .contact-row a, .contact-row span {
+    color: var(--gray);
+    font-size: 16px;
+    text-decoration: none;
+    transition: color .2s;
+  }
+
+  .contact-row a:hover { color: var(--white); }
+
+  /* SKILLS */
+  .skills-panel {
+    background: var(--muted);
+    padding: 40px;
+  }
+
+  .skills-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--red);
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+
+  .skill-item {
+    display: flex; flex-direction: column; gap: 6px;
+    margin-bottom: 20px;
+  }
+
+  .skill-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--white);
+    text-transform: uppercase;
+  }
+
+  .skill-bar {
+    height: 2px;
+    background: rgba(255,255,255,.08);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .skill-fill {
+    height: 100%;
+    background: var(--red);
+    width: 0;
+    transition: width 1.5s cubic-bezier(.16,1,.3,1);
+  }
+
+  /* BRANDS */
+  #brands {
+    background: var(--muted);
+  }
+
+  .brands-timeline {
+    display: flex; flex-direction: column; gap: 60px;
+  }
+
+  .brand-era {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+
+  .era-year {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 64px;
+    color: rgba(224,40,30,.3);
+    line-height: 1;
+    padding-top: 8px;
+  }
+
+  .brand-logos {
+    display: flex; flex-wrap: wrap; gap: 20px; align-items: center;
+  }
+
+  .brand-pill {
+    border: 1px solid rgba(255,255,255,.12);
+    padding: 12px 24px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--gray);
+    text-transform: uppercase;
+    transition: all .3s;
+    cursor: default;
+  }
+
+  .brand-pill:hover {
+    border-color: var(--red);
+    color: var(--white);
+    background: rgba(224,40,30,.06);
+  }
+
+  .brand-pill.featured {
+    border-color: rgba(224,40,30,.3);
+    color: var(--white);
+  }
+
+  /* SERVICES */
+  #services { background: var(--black); }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+
+  .service-card {
+    background: var(--muted);
+    padding: 48px 36px;
+    transition: background .3s;
+    cursor: default;
+  }
+
+  .service-card:hover { background: #1a1510; }
+
+  .service-icon {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 64px;
+    color: rgba(224,40,30,.2);
+    line-height: 1;
+    margin-bottom: 20px;
+  }
+
+  .service-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--red);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .service-desc {
+    font-size: 17px;
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--gray);
+  }
+
+  /* FOOTER / CTA */
+  #contact {
+    background: var(--red);
+    min-height: 60vh;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center;
+    padding: 120px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #contact::before {
+    content: 'CONTACT';
+    position: absolute;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28vw;
+    color: rgba(0,0,0,.08);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .cta-inner { position: relative; z-index: 2; }
+
+  .cta-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: rgba(0,0,0,.5);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .cta-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(56px, 8vw, 120px);
+    color: var(--black);
+    line-height: .9;
+    margin-bottom: 40px;
+  }
+
+  .cta-links {
+    display: flex; gap: 24px; justify-content: center; flex-wrap: wrap;
+  }
+
+  .cta-link {
+    display: inline-block;
+    padding: 14px 36px;
+    border: 2px solid var(--black);
+    color: var(--black);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all .3s;
+  }
+
+  .cta-link:hover {
+    background: var(--black);
+    color: var(--red);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    #hero { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+    section { padding: 80px 32px; }
+    .about-grid { grid-template-columns: 1fr; gap: 48px; }
+    .services-grid { grid-template-columns: 1fr; }
+    .brand-era { grid-template-columns: 1fr; }
+    nav { display: none; }
+    #lang-bar { right: 16px; top: 16px; }
+  }
+
+  /* REVEAL ANIMATION */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity .9s cubic-bezier(.16,1,.3,1), transform .9s cubic-bezier(.16,1,.3,1);
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<!-- Language Bar -->
+<div id="lang-bar">
+  <button class="lang-btn active" onclick="setLang('uz')">UZ</button>
+  <button class="lang-btn" onclick="setLang('ru')">RU</button>
+</div>
+
+<!-- Side Nav -->
+<nav>
+  <div class="nav-dot active" data-label="Home" onclick="scrollTo('hero')"></div>
+  <div class="nav-dot" data-label="About" onclick="scrollTo('about')"></div>
+  <div class="nav-dot" data-label="Brands" onclick="scrollTo('brands')"></div>
+  <div class="nav-dot" data-label="Services" onclick="scrollTo('services')"></div>
+  <div class="nav-dot" data-label="Contact" onclick="scrollTo('contact')"></div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-left">
+    <div class="hero-tag" data-uz="Grafik & Web Dizayner" data-ru="График & Веб Дизайнер">Grafik & Web Dizayner</div>
+    <h1 class="hero-name">
+      Bonu<span>Ikromova</span>
+    </h1>
+    <p class="hero-title" data-uz="8 yillik tajriba. Cheksiz imkoniyatlar." data-ru="8 лет опыта. Безграничные возможности.">8 yillik tajriba. Cheksiz imkoniyatlar.</p>
+    <div class="hero-meta">
+      <div class="meta-item">
+        <span class="meta-num">8</span>
+        <span class="meta-label" data-uz="Yil Tajriba" data-ru="Лет опыта">Yil Tajriba</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-num">15+</span>
+        <span class="meta-label" data-uz="Yirik Brendlar" data-ru="Крупных Брендов">Yirik Brendlar</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-num">3D</span>
+        <span class="meta-label" data-uz="Vizualizatsiya" data-ru="Визуализация">Vizualizatsiya</span>
+      </div>
+    </div>
+    <div class="scroll-hint" data-uz="Pastga suring" data-ru="Прокрутить вниз">Pastga suring</div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-bg-text">DESIGN</div>
+    <div class="hero-graphic">
+      <div class="circle-ring"></div>
+      <div class="circle-ring"></div>
+      <div class="circle-ring"></div>
+      <div class="tools-orbit" style="top:20%; left:30%">Ai</div>
+      <div class="tools-orbit" style="top:30%; right:25%">Ps</div>
+      <div class="tools-orbit" style="top:55%; left:20%">Id</div>
+      <div class="tools-orbit" style="top:60%; right:30%">Ae</div>
+      <div class="tools-orbit" style="top:75%; left:40%">Pr</div>
+      <div class="tools-orbit" style="top:40%; left:50%">C4D</div>
+      <div class="tools-orbit" style="top:15%; right:15%">Xd</div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-header reveal">
+    <span class="section-num">01</span>
+    <h2 class="section-title" data-uz="Men Haqimda" data-ru="Обо Мне">Men Haqimda</h2>
+  </div>
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <p data-uz="Men — <strong>Ikromova Niginabonu Botirovna</strong>, 2001-yilda Buxoro shahrida tug'ilganman. Hozirda Toshkentda yashab, Islom Karimov nomidagi TDTU bitiruvchi talabasiman."
+         data-ru="Я — <strong>Икромова Нигинабону Ботировна</strong>, родилась в 2001 году в Бухаре. Сейчас живу в Ташкенте, являюсь выпускницей ТГТУ им. Ислама Каримова.">
+        Men — <strong>Ikromova Niginabonu Botirovna</strong>, 2001-yilda Buxoro shahrida tug'ilganman. Hozirda Toshkentda yashab, Islom Karimov nomidagi TDTU bitiruvchi talabasiman.
+      </p>
+      <p data-uz="Grafik va veb-dizayn sohasida <strong>8 yildan ortiq tajriba</strong>. Tashqi reklama va brending loyihalarini muvaffaqiyatli boshqaraman. Brendlarning nafaqat vizual uslubini, balki ularning <strong>ko'p o'lchamli vizual konsepsiyasini</strong> ham yuqori darajada shakllantiraman."
+         data-ru="Более <strong>8 лет опыта</strong> в графическом и веб-дизайне. Успешно веду проекты в сфере наружной рекламы и брендинга. Формирую не только визуальный стиль, но и <strong>многомерную визуальную концепцию</strong> бренда.">
+        Grafik va veb-dizayn sohasida <strong>8 yildan ortiq tajriba</strong>. Tashqi reklama va brending loyihalarini muvaffaqiyatli boshqaraman. Brendlarning nafaqat vizual uslubini, balki ularning <strong>ko'p o'lchamli vizual konsepsiyasini</strong> ham yuqori darajada shakllantiraman.
+      </p>
+      <p data-uz="Maqsadim — <strong>estetik mukammallik va brend falsafasi</strong> uyg'unlashgan kreativ loyihalar yaratish."
+         data-ru="Моя цель — создавать креативные проекты, где <strong>эстетическое совершенство и философия бренда</strong> гармонично сочетаются.">
+        Maqsadim — <strong>estetik mukammallik va brend falsafasi</strong> uyg'unlashgan kreativ loyihalar yaratish.
+      </p>
+
+      <div class="about-contact">
+        <div class="contact-row">
+          <span class="ci">Tel</span>
+          <a href="tel:+998508701403">+998 50 870 14 03</a>
+        </div>
+        <div class="contact-row">
+          <span class="ci">Email</span>
+          <a href="mailto:ikromovanigina204@gmail.com">ikromovanigina204@gmail.com</a>
+        </div>
+        <div class="contact-row">
+          <span class="ci">Telegram</span>
+          <a href="https://t.me/niginabonu_ikromova01" target="_blank">@niginabonu_ikromova01</a>
+        </div>
+        <div class="contact-row">
+          <span class="ci">Portfolio</span>
+          <a href="https://t.me/+U7gfBiYkUt0wYTMy" target="_blank">Telegram Portfolio</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="skills-panel reveal">
+      <div class="skills-label" data-uz="Texnik Ko'nikmalar" data-ru="Технические Навыки">Texnik Ko'nikmalar</div>
+
+      <div class="skill-item">
+        <span class="skill-name">Adobe Photoshop</span>
+        <div class="skill-bar"><div class="skill-fill" data-width="97"></div></div>
+      </div>
+      <div class="skill-item">
+        <span class="skill-name">Adobe Illustrator</span>
+        <div class="skill-bar"><div class="skill-fill" data-width="95"></div></div>
+      </div>
+      <div class="skill-item">
+        <span class="skill-name">Adobe InDesign</span>
+        <div class="skill-bar"><div class="skill-fill" data-width="88"></div></div>
+      </div>
+      <div class="skill-item">
+        <span class="skill-name">CorelDRAW</span>
+        <div class="skill-bar"><div class="skill-fill" data-width="85"></div></div>
+      </div>
+      <div class="skill-item">
+        <span class="skill-name">Adobe XD / After Effects</span>
+        <div class="skill-bar"><div class="skill-fill" data-width="80"></div></div>
+      </div>
+      <div class="skill-item">
+        <span class="skill-name">Cinema 4D / Blender</span>
+        <div class="skill-bar"><div class="skill-fill" data-width="75"></div></div>
+      </div>
+      <div class="skill-item">
+        <span class="skill-name">AutoCAD</span>
+        <div class="skill-bar"><div class="skill-fill" data-width="70"></div></div>
+      </div>
+      <div class="skill-item">
+        <span class="skill-name">Typography & Branding</span>
+        <div class="skill-bar"><div class="skill-fill" data-width="98"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BRANDS -->
+<section id="brands">
+  <div class="section-header reveal">
+    <span class="section-num">02</span>
+    <h2 class="section-title" data-uz="Hamkor Brendlar" data-ru="Бренды-Партнёры">Hamkor Brendlar</h2>
+  </div>
+  <div class="brands-timeline">
+
+    <div class="brand-era reveal">
+      <div class="era-year">2018<br>2019</div>
+      <div>
+        <p style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--gray);text-transform:uppercase;margin-bottom:20px;" data-uz="Ilk yirik hamkorliklar" data-ru="Первые крупные партнёрства">Ilk yirik hamkorliklar</p>
+        <div class="brand-logos">
+          <div class="brand-pill featured">Hikvision</div>
+          <div class="brand-pill featured">Beta Tea</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="brand-era reveal">
+      <div class="era-year">2021<br>2022</div>
+      <div>
+        <p style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--gray);text-transform:uppercase;margin-bottom:20px;" data-uz="Buxoro — tashqi reklama loyihalari" data-ru="Бухара — проекты наружной рекламы">Buxoro — tashqi reklama loyihalari</p>
+        <div class="brand-logos">
+          <div class="brand-pill" data-uz="Hajmli harflar" data-ru="Объёмные буквы">Hajmli harflar</div>
+          <div class="brand-pill" data-uz="Katta format bannerlar" data-ru="Широкоформатные баннеры">Katta format bannerlar</div>
+          <div class="brand-pill" data-uz="Korporativ poligrafiya" data-ru="Корпоративная полиграфия">Korporativ poligrafiya</div>
+          <div class="brand-pill" data-uz="Vizual joylashuv" data-ru="Визуальное размещение">Vizual joylashuv</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="brand-era reveal">
+      <div class="era-year">2023<br>2024</div>
+      <div>
+        <p style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--gray);text-transform:uppercase;margin-bottom:20px;" data-uz="Toshkent — yirik brending loyihalari" data-ru="Ташкент — крупные брендинговые проекты">Toshkent — yirik brending loyihalari</p>
+        <div class="brand-logos">
+          <div class="brand-pill featured">Evy Baby</div>
+          <div class="brand-pill featured">Cold Stone Creamery</div>
+          <div class="brand-pill featured">IcyKoko</div>
+          <div class="brand-pill featured">DecArt Gallery</div>
+          <div class="brand-pill featured">Qahva Roastery</div>
+          <div class="brand-pill featured">TowerUp</div>
+          <div class="brand-pill featured">Hisense</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="brand-era reveal">
+      <div class="era-year">2024<br>2026</div>
+      <div>
+        <p style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--gray);text-transform:uppercase;margin-bottom:20px;" data-uz="Hozirgi loyihalar" data-ru="Текущие проекты">Hozirgi loyihalar</p>
+        <div class="brand-logos">
+          <div class="brand-pill featured">ATCO Hygienics</div>
+          <div class="brand-pill featured">Perla</div>
+          <div class="brand-pill featured">Perla Lady Care</div>
+          <div class="brand-pill featured">Pansy Baby</div>
+          <div class="brand-pill featured">Dry & Fit</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-header reveal">
+    <span class="section-num">03</span>
+    <h2 class="section-title" data-uz="Xizmatlar" data-ru="Услуги">Xizmatlar</h2>
+  </div>
+  <div class="services-grid">
+
+    <div class="service-card reveal">
+      <div class="service-icon">Br</div>
+      <div class="service-name" data-uz="Brending & Identity" data-ru="Брендинг & Айдентика">Brending & Identity</div>
+      <p class="service-desc" data-uz="Logo, brand book, korporativ uslub, rang va shrift tizimi — to'liq brand paketi." data-ru="Логотип, брендбук, корпоративный стиль, цветовая и шрифтовая система — полный брендовый пакет.">Logo, brand book, korporativ uslub, rang va shrift tizimi — to'liq brand paketi.</p>
+    </div>
+
+    <div class="service-card reveal">
+      <div class="service-icon">Ad</div>
+      <div class="service-name" data-uz="Tashqi Reklama" data-ru="Наружная Реклама">Tashqi Reklama</div>
+      <p class="service-desc" data-uz="Hajmli harflar, panno, billboard, banner dizaynlari — katta formatli vizual yechimlar." data-ru="Объёмные буквы, панно, билборды, баннеры — визуальные решения большого формата.">Hajmli harflar, panno, billboard, banner dizaynlari — katta formatli vizual yechimlar.</p>
+    </div>
+
+    <div class="service-card reveal">
+      <div class="service-icon">3D</div>
+      <div class="service-name" data-uz="3D Vizualizatsiya" data-ru="3D Визуализация">3D Vizualizatsiya</div>
+      <p class="service-desc" data-uz="Cinema 4D va Blender orqali mahsulot va loyihalarning jonli 3D modellarini yaratish." data-ru="Создание реалистичных 3D-моделей продуктов и проектов в Cinema 4D и Blender.">Cinema 4D va Blender orqali mahsulot va loyihalarning jonli 3D modellarini yaratish.</p>
+    </div>
+
+    <div class="service-card reveal">
+      <div class="service-icon">Pn</div>
+      <div class="service-name" data-uz="Poligrafiya" data-ru="Полиграфия">Poligrafiya</div>
+      <p class="service-desc" data-uz="Vizitka, buklet, katalog, jurnal layout — CMYK bosmasiga tayyor professional dizayn." data-ru="Визитки, буклеты, каталоги, журнальные макеты — профессиональный дизайн для печати в CMYK.">Vizitka, buklet, katalog, jurnal layout — CMYK bosmasiga tayyor professional dizayn.</p>
+    </div>
+
+    <div class="service-card reveal">
+      <div class="service-icon">Sm</div>
+      <div class="service-name" data-uz="SMM Dizayn" data-ru="SMM Дизайн">SMM Dizayn</div>
+      <p class="service-desc" data-uz="Instagram, Telegram va boshqa ijtimoiy tarmoqlar uchun esda qoladigan vizual kontent." data-ru="Запоминающийся визуальный контент для Instagram, Telegram и других социальных сетей.">Instagram, Telegram va boshqa ijtimoiy tarmoqlar uchun esda qoladigan vizual kontent.</p>
+    </div>
+
+    <div class="service-card reveal">
+      <div class="service-icon">Wb</div>
+      <div class="service-name" data-uz="Web Dizayn" data-ru="Веб-Дизайн">Web Dizayn</div>
+      <p class="service-desc" data-uz="Figma, Adobe XD orqali zamonaviy va foydalanuvchiga qulay web-sahifalar prototiplash." data-ru="Прототипирование современных и удобных веб-страниц в Figma и Adobe XD.">Figma, Adobe XD orqali zamonaviy va foydalanuvchiga qulay web-sahifalar prototiplash.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="cta-inner">
+    <p class="cta-label" data-uz="Loyihangiz bor? Gaplashamiz." data-ru="Есть проект? Давайте обсудим.">Loyihangiz bor? Gaplashamiz.</p>
+    <h2 class="cta-title">Let's<br>Create</h2>
+    <div class="cta-links">
+      <a href="https://t.me/niginabonu_ikromova01" target="_blank" class="cta-link">Telegram</a>
+      <a href="mailto:ikromovanigina204@gmail.com" class="cta-link">Email</a>
+      <a href="tel:+998508701403" class="cta-link">+998 50 870 14 03</a>
+    </div>
+  </div>
+</section>
+
+<script>
+  // LANGUAGE SWITCH
+  const translations = {};
+  
+  function setLang(lang) {
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]]`).classList.add('active');
+
+    document.querySelectorAll('[data-uz]').forEach(el => {
+      const text = el.getAttribute(`data-${lang}`);
+      if (text) el.innerHTML = text;
+    });
+  }
+
+  // SCROLL REVEAL
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        // Animate skill bars
+        e.target.querySelectorAll('.skill-fill').forEach(bar => {
+          bar.style.width = bar.dataset.width + '%';
+        });
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // NAV DOTS
+  const sections = ['hero','about','brands','services','contact'];
+  const dots = document.querySelectorAll('.nav-dot');
+
+  const navObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        dots.forEach(d => d.classList.remove('active'));
+        const idx = sections.indexOf(e.target.id);
+        if (idx > -1) dots[idx].classList.add('active');
+      }
+    });
+  }, { threshold: 0.5 });
+
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) navObserver.observe(el);
+  });
+
+  function scrollTo(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
